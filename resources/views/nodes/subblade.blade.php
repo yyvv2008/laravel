@@ -1,0 +1,1 @@
+<p>sub blade  <?= $message ?></p>
