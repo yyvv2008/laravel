@@ -37,9 +37,9 @@
 		                <td>{{ $node->x_axis }}</td>
 		                <td>{{ $node->y_axis }}</td>
 		                <td>
-		                    <a href="">详情</a>
-		                    <a href="">修改</a>
-		                    <a href="">删除</a>
+		                    <a href="{{ url('node/view', ['id' => $node->id]) }}">详情</a>
+		                    <a href="{{ url('node/update', ['id' => $node->id]) }}">修改</a>
+		                    <a href="{{ url('node/delete', ['id' => $node->id]) }}">删除</a>
 		                </td>
 		            </tr>
 

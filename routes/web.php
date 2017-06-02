@@ -91,9 +91,11 @@ Route::any('node/orm4', 'NodeController@orm4');
 Route::any('node/section1', 'NodeController@section1');
 Route::any('node/urlTest', ['uses' => 'NodeController@urlTest', 'as' => 'url']);
 
+
 Auth::routes();
 
-Route::get('/home', 'HomeController@index')->name('home');
+Route::get('/home', 'HomeController@index')->name('homesssss');
+
 
 Route::any('upload', 'StudentController@upload');
 Route::any('mail', 'StudentController@mail');
@@ -118,8 +120,15 @@ Route::group(['meddelware' => ['web']], function() {
 	Route::any('node/index', ['uses' => 'NodeController@index']);
 	Route::any('node/create', ['uses' => 'NodeController@create']);
 	Route::any('node/save', ['uses' => 'NodeController@save']);
+	Route::any('node/update/{id}', ['uses' => 'NodeController@update']);
+	Route::any('node/view/{id}', ['uses' => 'NodeController@view']);
+	Route::any('node/delete/{id}', ['uses' => 'NodeController@delete']);
 });
 
 Route::group(['middleware' => ['active']], function() {
 	Route::any('node/active1', ['uses' => 'NodeController@active1']);
 });
+
+Route::any('node/redis', ['uses' => 'NodeController@redis']);
+Route::any('node/foreignKey', ['uses' => 'NodeController@foreignKey']);
+

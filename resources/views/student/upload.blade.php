@@ -30,5 +30,9 @@
             </div>
         </div>
     </div>
+
+    <div>
+        <img src="{{ asset('storage/uploads/testa.png') }}" alt="">
+    </div>
 </div>
 @endsection

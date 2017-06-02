@@ -7,6 +7,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Redis;
+use Illuminate\Support\Facades\Log;
+use App\Events\Event;
 
 /**
 * 
@@ -276,6 +280,9 @@ class NodeController extends Controller
 
 	public function index()
 	{
+		// $columns = Schema::getColumnListing('users');
+		// dd($columns);
+
 		// $nodes = DB::table('byt_klha_node')->get();
 		$nodes = Node::paginate(3);
 
@@ -285,34 +292,167 @@ class NodeController extends Controller
 
 	public function create(Request $request)
 	{
+		$node = new Node();
 		if ($request->isMethod('post')) {
+
+
+			$this->validate($request, [
+				'Node.gateway_id' => 'required|integer',
+				'Node.name' => 'required|min:2|max:6',
+				'Node.land_id' => 'required|integer',
+				'Node.sensor_addr' => 'required|integer',
+			], [
+				'required' => ':attribute 为必填项',
+				'min' => ':attribute 不能少于2个字符',
+				'integer' => ':attribute 为整数',
+			], [
+				'Node.gateway_id' => '网关ID',
+				'Node.name' => '名称',
+				'Node.land_id' => '地块ID',
+				'Node.sensor_addr' => '传感器类型',
+			]);
+
+			// $validate = \Validator::make($request->input(), [
+			// 	'Node.gateway_id' => 'required|integer',
+			// 	'Node.name' => 'required|min:2|max:6',
+			// 	'Node.land_id' => 'required|integer',
+			// 	'Node.sensor_addr' => 'required|integer',
+			// ], [
+			// 	'required' => ':attribute 为必填项',
+			// 	'min' => ':attribute 不能少于2个字符',
+			// 	'integer' => ':attribute 为整数',
+			// ], [
+			// 	'Node.gateway_id' => '网关ID',
+			// 	'Node.name' => '名称',
+			// 	'Node.land_id' => '地块ID',
+			// 	'Node.sensor_addr' => '传感器类型',
+			// ]);
+
+			// if ($validate->fails()) {
+			// 	return redirect()->back()->withErrors($validate)->withInput();
+			// }
+
 			$datas = $request->input('Node');
 
-			if (Node::create($datas)) {
-				return redirect('node/index')->with('success', 'yeah, it is done!!!');
+			if ($res = Node::create($datas)) {
+				echo $res->name;
+				// return redirect('node/index')->with('success', 'yeah, it is done!!!');
 			} else {
 				return redirect()->with('error', 'oh, no!!!')->back();
 			}
 		}
 
-		return view('node.create');
+		return view('node.create', [
+				'node' => $node,
+			]);
 	}
 
-	public function save(Request $request)
-	{
-		$datas = $request->input('Node');
+	// public function save(Request $request)
+	// {
+	// 	$datas = $request->input('Node');
 
-		$node = new Node;
-		$node->gateway_id = $datas['gateway_id'];
-		$node->name = $datas['name'];
-		$node->land_id = $datas['land_id'];
-		$node->sensor_addr = $datas['sensor_addr'];
-		if ($node->save()) {
-			return redirect('node/index');
-		} else {
-			return redirect()->back();
+	// 	$node = new Node;
+	// 	$node->gateway_id = $datas['gateway_id'];
+	// 	$node->name = $datas['name'];
+	// 	$node->land_id = $datas['land_id'];
+	// 	$node->sensor_addr = $datas['sensor_addr'];
+	// 	if ($node->save()) {
+	// 		return redirect('node/index');
+	// 	} else {
+	// 		return redirect()->back();
+	// 	}
+
+	// 	dd($datas);
+	// }
+
+	public function update(Request $request, $id)
+	{
+		$node = Node::find($id);
+
+		if ($request->isMethod('post')) {
+
+			$this->validate($request, [
+				'Node.gateway_id' => 'required|integer',
+				'Node.name' => 'required|min:2|max:6',
+				'Node.land_id' => 'required|integer',
+				'Node.sensor_addr' => 'required|integer',
+			], [
+				'required' => ':attribute 为必填项',
+				'min' => ':attribute 不能少于2个字符',
+				'integer' => ':attribute 为整数',
+			], [
+				'Node.gateway_id' => '网关ID',
+				'Node.name' => '名称',
+				'Node.land_id' => '地块ID',
+				'Node.sensor_addr' => '传感器类型',
+			]);
+
+			$datas = $request->input('Node');
+
+			if (Node::where('id', $id)->update($datas)) {
+				return redirect('node/index')->with('success', 'success for ' . $id);
+			} else {
+				return redirect()->with('error', 'oh, no!!!')->back();
+			}
 		}
 
-		dd($datas);
+		return view('node.update', [
+				'node' => $node
+			]);
+	}
+
+	public function view($id)
+	{
+		$node = Node::find($id)->attributesToArray();
+
+		return view('node.view', [
+				'node' => $node
+			]);
+	}
+
+	public function delete($id)
+	{
+		$res = Node::find($id)->delete();
+
+		if ($res) {
+			return redirect('node/index')->with('success', 'yes delete ' . $id);
+		} else {
+			return redirect('node/index')->with('error', 'fail delete ' . $id);
+		}
+	}
+
+	public function redis()
+	{
+		// $res = Redis::lpush('names', 'Taylor3');
+		// $res = Redis::lpush('names', 'Taylor4');
+
+		// $res = Redis::flushdb();
+		// $res = Redis::lrange('names', 0, -1);
+		// $result = Redis::lrange('names', 0, 0);
+
+		Redis::set('name1', 'val1');
+		Redis::set('name2', 'val2');
+
+		$res = Redis::mget(['name1', 'name2']);
+
+
+		dd($res);
+	}
+
+	public function foreignKey()
+	{
+		// $res = Node::first()->gateway->name;
+		$res = Node::first();
+
+		event(new Event($res));
+
+
+		// dd($res);
+
+		// Log::info(' the testing log');
+		// Log::error('User failed to login.', ['id' => 1]);
+		// $monolog = Log::getMonolog();
+
+
 	}
 }

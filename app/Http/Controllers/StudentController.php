@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Mail;
 use App\Jobs\SendEmail;
+use Carbon\Carbon;
 
 class StudentController extends Controller
 {
@@ -94,10 +95,10 @@ class StudentController extends Controller
 
     public function queue()
     {
-    	// $res = dispatch(new SendEmail('5910126585555@qq.com'));
+    	$res = dispatch((new SendEmail('591012658@qq.com'))->delay(Carbon::now()->addMinutes(1)));
 
     	// $job = new SendEmail('591012658@qq.com');
-    	// $job->handle();
+    	// $res = $job->handle();
 
     	// var_dump($res);
     }

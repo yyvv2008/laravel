@@ -40,7 +40,7 @@ use Illuminate\Http\Request
         <div class="col-md-3">
             @section('leftmenu')
                 <div class="list-group">
-                    <a href="{{ url('node/index') }}" class="list-group-item {{ request()->is('node/index') ? 'active' : 'www' }}">Nodes列表</a>
+                    <a href="{{ url('node/index') }}" class="list-group-item {{ !(request()->is('node/create')) ? 'active' : '' }}">Nodes列表</a>
                     <a href="{{ url('node/create') }}" class="list-group-item {{ request()->getPathInfo() == '/node/create' ? 'active' : '' }}">新增node</a>
                 </div>
             @show

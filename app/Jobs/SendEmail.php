@@ -33,7 +33,7 @@ class SendEmail implements ShouldQueue
      */
     public function handle()
     {
-        Mail::raw('queue test', function($message) {
+        return Mail::raw('queue test', function($message) {
             $message->to($this->email);
         });
     }
