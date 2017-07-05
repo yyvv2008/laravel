@@ -439,6 +439,18 @@ class NodeController extends Controller
 		dd($res);
 	}
 
+	public function mongodb()
+	{
+		$manager = new \MongoDB\Driver\Manager("mongodb://admin:111111@localhost:27017");
+
+		$query = new \MongoDB\Driver\Query(['title' => 'for array']);
+		$cursor = $manager->executeQuery('test.test2', $query);
+
+		foreach ($cursor as $document) {
+		    var_dump($document->title);
+		}
+	}
+
 	public function foreignKey()
 	{
 		// $res = Node::first()->gateway->name;

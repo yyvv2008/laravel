@@ -130,5 +130,6 @@ Route::group(['middleware' => ['active']], function() {
 });
 
 Route::any('node/redis', ['uses' => 'NodeController@redis']);
+Route::any('node/mongodb', ['uses' => 'NodeController@mongodb']);
 Route::any('node/foreignKey', ['uses' => 'NodeController@foreignKey']);
 
